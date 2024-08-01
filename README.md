@@ -1,3 +1,3 @@
-![oloPATH](images/olobio-logo.png)
+![oloPATH](images/olobion-logo.png)
 
 # oloPATH
