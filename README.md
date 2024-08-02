@@ -6,7 +6,7 @@ Package for metabolomic pathways analysis.
 
 ## Species databases structure
 
-Each database consistis of three dictionaries: `molecules`, `inchikey` and `pathways`.
+Each database consists of three dictionaries: `molecules`, `inchikey` and `pathways`.
 
 - `molecules` dictionary has ChEMI molecules identifiers as keys and dictionaries containing the molecule name, short InChiKey and associated Reactome pathways identfiers as values.
 
