@@ -37,20 +37,19 @@ if __name__ == "__main__":
         line = line.strip()
         line = line.split("\t")
 
-        organism = line[5]    
-        chebid = line[0]
-        pathid = line[1]
+        organism = line[2]    
+        pathid = line[0]
+        pathnm = line[1]
+
+        species = ['Homo sapiens', 'Mus musculus']
+        if organism in species:
+            if organism not in pathways.keys():
+                pathways[organism] = {}
         
-        if organism not in pathways.keys():
-            pathways[organism] = {}
-        
-        if chebid not in pathways[organism].keys():
-            pathways[organism][chebid] = []
-        
-        pathways[organism][chebid].append(pathid)
+            pathways[organism][pathid] = {'name': pathnm}
     
     for org in pathways.keys():
-        sys.stderr.write("%d molecules present in %s pathways \n" %
+        sys.stderr.write("%d pathways found in %s \n" %
                          (len(pathways[org]), org))
         
     ut.save_json(pathways, options.outfile, compressed=True)

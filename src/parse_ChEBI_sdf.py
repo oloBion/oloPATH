@@ -25,30 +25,27 @@ if __name__ == "__main__":
     if len(sys.argv) <= 2:
         sys.stderr.write("No input or output provided. Please, try again. \n")
         exit()
-
-    pathways = {}
+    
+    molecules = {}
 
     f = open(options.infile)
     sys.stderr.write("Loaded file: %s \n" % options.infile)
 
     sys.stderr.write("Parsing file... \n")
 
-    for line in f:
-        line = line.strip()
-        line = line.split("\t")
+    for num, line in enumerate(f):
+        if line.startswith("> <ChEBI ID>"):
+            chebid = f.readline(num+1).strip()
+            chebid = re.findall(r'\d+', chebid)[0]
+            molecules[chebid] = {}
+        if line.startswith("> <ChEBI Name>"):
+            name = f.readline(num+1).strip()
+            molecules[chebid]['name'] = name
+        if line.startswith("> <InChIKey>"):
+            inchk = f.readline(num+1).strip().split('-', 1)[0]
+            molecules[chebid]['inchikey'] = inchk
 
-        organism = line[2]    
-        pathid = line[0]
-        pathnm = line[1]
-        
-        if organism not in pathways.keys():
-            pathways[organism] = {}
-        
-        pathways[organism][pathid] = {'diplay_name': pathnm}
+    sys.stderr.write("%d molecules found \n" % len(molecules))
     
-    for org in pathways.keys():
-        sys.stderr.write("%d pathways found in %s \n" %
-                         (len(pathways[org]), org))
-        
-    ut.save_json(pathways, options.outfile, compressed=False)
+    ut.save_json(molecules, options.outfile, compressed=True)
     sys.stderr.write("File saved as %s \n" % options.outfile)
