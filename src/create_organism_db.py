@@ -81,5 +81,5 @@ if __name__ == "__main__":
     
     sys.stderr.write("Database created \n")
 
-    ut.save_json(organism_database, options.outfile, compressed=False)
+    ut.save_json(organism_database, options.outfile, compressed=True)
     sys.stderr.write("File saved as %s \n" % options.outfile)
