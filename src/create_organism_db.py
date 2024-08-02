@@ -64,22 +64,22 @@ if __name__ == "__main__":
 
     sys.stderr.write("Creating %s database... \n" % species)
 
-    organism_database = {'molecules_dict': {},
-                         'inchikey_dict': {},
-                         'pathways_dict': reactome_pathways}
+    organism_database = {'molecules': {},
+                         'inchikey': {},
+                         'pathways': reactome_pathways}
     
     for mol in ch2reactome.keys():
         try:
-            organism_database['molecules_dict'][mol] = chmolecules[mol]
-            organism_database['molecules_dict'][mol]['pathways'] = ch2reactome[mol]
+            organism_database['molecules'][mol] = chmolecules[mol]
+            organism_database['molecules'][mol]['pathways'] = ch2reactome[mol]
             inch = chmolecules[mol]['inchikey']
-            if inch not in organism_database['inchk_dict'].keys():
-                organism_database['inchikey_dict'][inch] = []
-            insort(organism_database['inchikey_dict'][inch], mol)
+            if inch not in organism_database['inchikey'].keys():
+                organism_database['inchikey'][inch] = []
+            insort(organism_database['inchikey'][inch], mol)
         except KeyError:
             continue
     
     sys.stderr.write("Database created \n")
 
-    ut.save_json(organism_database, options.outfile, compressed=True)
+    ut.save_json(organism_database, options.outfile, compressed=False)
     sys.stderr.write("File saved as %s \n" % options.outfile)
