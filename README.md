@@ -4,6 +4,27 @@
 
 Package for metabolomic pathways analysis.
 
+## Input data
+
+oloPATH requires the following input data:
+
+1. `intensity_df`: is a matrix of metabolites intensities, where rows represent metabolites and columns represent individual samples. The first column must be the metabolite id (`alignid`) and needs to be set as index.
+
+2. `annotation_df`: is a table of two columns that associates metabolite id (`alignid`) with metabolite InChiKey (`inchikey`). The `alignid` column has to be set as index.
+
+3. `study_design`: is a dictionary containing information about groups as follows:
+
+```
+{'control': {'name': 'Control',
+             'samples: ['C1', 'C2', 'C3', 'C4']
+            },
+ 'case': {'name': 'KO',
+          'samples: ['K1', 'K2', 'K3', 'K4']
+         },
+}
+```
+
+
 ## Species databases structure
 
 Each database consists of three dictionaries: `molecules`, `inchikey` and `pathways`.
