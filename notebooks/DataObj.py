@@ -4,7 +4,7 @@ from collections import defaultdict
 
 
 INCHIKEY = 'inchikey'
-CHEBID = 'chemi_id'
+MOLID = 'id'
 
 
 class Database(object):
@@ -23,7 +23,7 @@ class Database(object):
 
 class DataSource(object):
 
-    def __init__(self, intensities_df, annotation_df, study_design, species):
+    def __init__(self, intensity_df, annotation_df, study_design, species):
         """
         Creates a data source for oloPATH analysis
         :param intesities_df: a dataframe of peak intensities, where
@@ -37,7 +37,7 @@ class DataSource(object):
         :param species: the species name (Homo sapiens or Mus musculus)
         """
 
-        self.intensities_df = intensities_df
+        self.intensity_df = intensity_df
         self.annotation_df = annotation_df
         self.study_design = study_design
         self.species = species.capitalize()
@@ -47,48 +47,52 @@ class DataSource(object):
         self.molecules = self.database['molecules']
         self.pathways = self.database['pathways']
 
-        self.annotation_chebid_df = self.get_chebid_from_inchikey()
+        self.annotation_molid_df = self.get_molid_from_inchikey()
 
         self.mols_in_pathways = self.molecules_in_pathways()
 
-        self.paths_in_data, self.alignid_in_paths = self.pathways_in_dataset()
+        self.pathways_in_data = self.pathways_in_dataset()
 
-        self.species_chebid_count = len(self.database['molecules'])
-        self.dataset_chebid_count = len(self.annotation_df)
+        self.species_molid_count = len(self.database['molecules'])
+        self.dataset_molid_count = len(self.annotation_molid_df)
 
 
-    def get_chebid_from_inchikey(self):
+    def get_molid_from_inchikey(self):
         self.inchikey = self.database['inchikey']
 
-        annotation_chebid_df = self.annotation_df.copy()
+        annotation_molid_df = self.annotation_df.copy()
 
-        for alignid, row in annotation_chebid_df.iterrows():
+        for alignid, row in annotation_molid_df.iterrows():
             inchk = row['inchikey']
             try:
-                chebid = self.inchikey[inchk][0]
+                molid = self.inchikey[inchk][0]
             except KeyError:
                 continue
 
-            annotation_chebid_df.loc[alignid, CHEBID] = chebid
-        annotation_chebid_df = annotation_chebid_df[CHEBID].dropna()
-        return annotation_chebid_df
+            annotation_molid_df.loc[alignid, MOLID] = molid
+        annotation_molid_df = annotation_molid_df[MOLID].dropna()
+        return annotation_molid_df
 
 
     def molecules_in_pathways(self):
         molecules_in_pathways = defaultdict(set)
-        for chebid in self.molecules.keys():
-            pathways = self.molecules[chebid]['pathways']
+        for molid in self.molecules.keys():
+            pathways = self.molecules[molid]['pathways']
             for path in pathways:
-                molecules_in_pathways[path].add(chebid)
+                molecules_in_pathways[path].add(molid)
         return molecules_in_pathways
 
 
     def pathways_in_dataset(self):
-        alignid_in_pathways = defaultdict(list)
-        for alignid, chebid in self.annotation_chebid_df.items():
-            pathways = self.molecules[chebid]['pathways']
+        pathways_in_dataset = {}
+        for alignid, molid in self.annotation_molid_df.items():
+            pathways = self.molecules[molid]['pathways']
             for path in pathways:
-                alignid_in_pathways[path].append(alignid)
-        pathways_in_dataset = set(alignid_in_pathways.key())
-        return pathways_in_dataset, alignid_in_pathways
+                if path not in pathways_in_dataset.keys():
+                    name = self.pathways[path]['name']
+                    pathways_in_dataset[path] = {'name': name,
+                                                 'alignid': []}
+                pathways_in_dataset[path]['alignid'].append(alignid)
+        return pathways_in_dataset
+
 
