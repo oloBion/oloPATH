@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 from scipy.stats import ttest_ind
 from scipy.stats import hypergeom
-import src.preprocessing as pcss
-from src.variables import PATHID, PATHNM, PVALUE, PATH_COM, HITS, PATH_COV, \
+import olopath.preprocessing as pcss
+from olopath.variables import PATHID, PATHNM, PVALUE, PATH_COM, HITS, PATH_COV, \
     PATH_SIG, ALIGNID
 
 

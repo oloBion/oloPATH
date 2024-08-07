@@ -1,6 +1,6 @@
 import os
-import src.oloutils as ut
-from src.variables import MOLID, INCHIKEY, MOLNM
+import olopath.oloutils as ut
+from olopath.variables import MOLID, INCHIKEY, MOLNM
 from collections import defaultdict
 
 
@@ -9,11 +9,9 @@ class Database(object):
     def __init__(self, species):
 
         self.species = species
-        directory = os.getcwd().split("oloPATH")[0] + 'oloPATH'
-        json_file = os.path.abspath(
-            '%s/data/metabolic_pathways/%s.json.zip' % (directory, species))
-        json_file = "/home/npa/Documentos/oloPATH/data/metabolic_pathways/Mus musculus.json.zip"
-
+        directory = os.path.join(os.path.dirname(__file__), 'data')
+        json_file = os.path.abspath(os.path.join(directory,
+                                                 '%s.json.zip' % species))
         self.database = ut.load_json(json_file, compressed=True)
 
     def load(self):

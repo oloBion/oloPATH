@@ -1,7 +1,7 @@
 import gzip
 import json
 import pandas as pd
-from src.variables import INCHIKEY, MOLNM, ALIGNID, GROUP, SAMPLE
+from olopath.variables import INCHIKEY, MOLNM, ALIGNID, GROUP, SAMPLE
 
 
 def load_json(json_file, compressed=False):
