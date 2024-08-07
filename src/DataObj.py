@@ -1,5 +1,5 @@
 import os
-import src.utils as ut
+import src.oloutils as ut
 from src.variables import MOLID, INCHIKEY, MOLNM
 from collections import defaultdict
 
