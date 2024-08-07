@@ -24,7 +24,7 @@ def save_json(data, json_file, compressed=False):
 def load_data(data, study_design, case, control):
     if not isinstance(data, pd.DataFrame):
         data = pd.read_csv(data)
-    
+
     annotation_df = data[[ALIGNID, INCHIKEY, MOLNM]]
     annotation_df = annotation_df.set_index(ALIGNID)
     annotation_df[INCHIKEY] =\

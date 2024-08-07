@@ -1,12 +1,12 @@
 
-GROUP = "group"
-SAMPLE = "sample"
-INCHIKEY = 'inchikey'
-MOLID = 'metabolite_id'
-MOLNM = "metabolite_name"
-ALIGNID = 'alignid'
-PATHID = 'pathway_id'
-PATHNM = 'pathway_name'
+GROUP = "Group"
+SAMPLE = "Sample"
+INCHIKEY = 'INCHIKEY'
+MOLID = 'Metabolite ID'
+MOLNM = "Metabolite name"
+ALIGNID = 'Alignment ID'
+PATHID = 'Pathway ID'
+PATHNM = 'Pathway Name'
 PVALUE = 'p-Value'
 PATH_COM = "Pathway Compounds"
 HITS = "Hits"

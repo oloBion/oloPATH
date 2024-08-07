@@ -18,7 +18,6 @@ class PATHAnalysis(object):
         self.data = data
 
     def get_results(self):
-
         intensity_df = self.data.intensity_df
         processed_intensity_df = self.preprocess_data(intensity_df)
         activity_df = self.calculate_pathway_activity(processed_intensity_df)
@@ -141,12 +140,16 @@ class PATHAnalysis(object):
 
     def get_metabolites_df(self):
         metabolites_df = pd.DataFrame(self.data.pathways_in_data).T
+        metabolites_df.index.name = PATHID
+        metabolites_df.rename(columns={'name': PATHNM,
+                                       'alignid': ALIGNID}, inplace=True)
+        metabolites_df.reset_index(inplace=True)
         metabolites_df = metabolites_df.explode(ALIGNID)
 
         annotation_molid_df = self.data.annotation_molid_df
 
         metabolites_df = pd.merge(metabolites_df, annotation_molid_df,
-                                  on=ALIGNID).reset_index(drop=True)
+                                  on=ALIGNID)
         metabolites_df.rename(columns={'name': PATHNM}, inplace=True)
 
         return metabolites_df
