@@ -13,7 +13,7 @@ class Preprocessing(object):
 
 class ZeroAndNegativeReplace(Preprocessing):
     def process(self, df):
-        df[df <= 0.0] = None
+        df[df <= 0.0] = np.nan
         return df
 
 
