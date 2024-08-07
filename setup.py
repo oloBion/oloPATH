@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-REQUIREMENTS = ['scipy', 'numpy','pandas', 'sklearn']
+REQUIREMENTS = ['scipy', 'numpy','pandas', 'scikit-learn']
 
 setup(
     name='oloPATH',
