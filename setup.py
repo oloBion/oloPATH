@@ -19,4 +19,5 @@ setup(
         ],
     },
     python_requires='>=3.10',
+    py_modules=['oloutils', 'DataObj', 'PATHAnalysis', 'preprocessing']
     )
