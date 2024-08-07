@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 REQUIREMENTS = ['scipy', 'numpy','pandas', 'scikit-learn']
 
@@ -10,7 +10,7 @@ setup(
     author_email='np@olobion.ai',
     url='https://github.com/oloBion/oloPATH',
     install_requires = REQUIREMENTS,
-    packages = find_packages(),
+    packages = ['olopath'],
     package_data={
     'olopath': [
         'data/ChEBI/*.json.zip',
@@ -18,5 +18,5 @@ setup(
         'data/metabolic_pathways/*.json.zip',
         ],
     },
-    python_requires='>=3.10'
+    python_requires='>=3.10',
     )
