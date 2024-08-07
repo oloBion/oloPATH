@@ -69,7 +69,6 @@ class DataSource(object):
 
             annotation_molid_df.loc[alignid, MOLID] = molid
             annotation_molid_df.loc[alignid, MOLNM] = molnm
-        print(MOLID)
         annotation_molid_df = annotation_molid_df[[MOLID, MOLNM]].dropna()
         return annotation_molid_df
 
