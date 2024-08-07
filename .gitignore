@@ -3,3 +3,7 @@ notebooks/tests.ipynb
 notebooks/__pycache__/DataObj.cpython-311.pyc
 notebooks/__pycache__/PATHAnalysis.cpython-311.pyc
 notebooks/__pycache__/preprocessing.cpython-311.pyc
+src/__pycache__/DataObj.cpython-311.pyc
+src/__pycache__/PATHAnalysis.cpython-311.pyc
+src/__pycache__/preprocessing.cpython-311.pyc
+src/__pycache__/variables.cpython-311.pyc
