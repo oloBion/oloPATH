@@ -9,9 +9,11 @@ class Database(object):
     def __init__(self, species):
 
         self.species = species
+        directory = os.getcwd().split("oloPATH")[0] + 'oloPATH'
         json_file = os.path.abspath(
-            '../data/metabolic_pathways/%s.json.zip' % species)
-        
+            '%s/data/metabolic_pathways/%s.json.zip' % (directory, species))
+        json_file = "/home/npa/Documentos/oloPATH/data/metabolic_pathways/Mus musculus.json.zip"
+
         self.database = ut.load_json(json_file, compressed=True)
 
     def load(self):
