@@ -1,8 +1,22 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "oloPATH"
 version = "1.0"
+authors = [
+  { name="Neus Pou Amengual", email="np@olobion.ai" },
+]
 description = "Package for metabolomic pathways analysis"
-
 readme = "README.md"
-repository = "https://github.com/olobion/oloPATH"
 requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/olobion/oloPATH"
+
