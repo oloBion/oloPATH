@@ -1,0 +1,8 @@
+[project]
+name = "oloPATH"
+version = "1.0"
+description = "Package for metabolomic pathways analysis"
+
+readme = "README.md"
+repository = "https://github.com/olobion/oloPATH"
+requires-python = ">=3.10"
