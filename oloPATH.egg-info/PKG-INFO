@@ -1,0 +1,12 @@
+Metadata-Version: 2.1
+Name: oloPATH
+Version: 1.0
+Summary: Package for metabolomic pathways analysis
+Home-page: https://github.com/oloBion/oloPATH
+Author: Neus Pou Amengual
+Author-email: np@olobion.ai
+Requires-Python: >=3.10
+Requires-Dist: scipy
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: scikit-learn
