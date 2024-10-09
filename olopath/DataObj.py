@@ -34,7 +34,8 @@ class DataSource(object):
         :param species: the species name (Homo sapiens or Mus musculus)
         """
 
-        self.intensity_df = intensity_df
+        self.intensity_df = self.filter_intesities_by_groups(intensity_df,
+                                                             study_design)
         self.annotation_df = annotation_df
         self.study_design = study_design
         self.species = species.capitalize()
@@ -52,6 +53,16 @@ class DataSource(object):
 
         self.species_molid_count = len(self.database['molecules'])
         self.dataset_molid_count = len(self.annotation_molid_df)
+
+    
+    def filter_intesities_by_groups(self, df, study_design):
+        case_samples = study_design['case']['samples']
+        control_samples = study_design['control']['samples']
+        samples = case_samples + control_samples
+
+        df = df.loc[:, samples]
+
+        return df
 
 
     def get_molid_from_inchikey(self):
@@ -92,7 +103,8 @@ class DataSource(object):
                     name = self.pathways[path]['name']
                     pathways_in_dataset[path] = {'name': name,
                                                  'alignid': []}
-                pathways_in_dataset[path]['alignid'].append(alignid)
+                if alignid not in pathways_in_dataset[path]['alignid']:
+                    pathways_in_dataset[path]['alignid'].append(alignid)
         return pathways_in_dataset
 
 
