@@ -34,7 +34,7 @@ class PATHAnalysis(object):
         study_design = self.data.study_design
 
         df = pcss.ZeroAndNegativeReplace().process(df)
-        df = pcss.MinValueImputation().process(df)
+        df = pcss.MissingValueImputation(study_design).process(df)
         df = pcss.RowAverageImputation(study_design).process(df)
         df = pcss.LogNormalisation().process(df)
         df = pcss.ZScoreNormalisation().process(df)

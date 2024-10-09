@@ -17,9 +17,27 @@ class ZeroAndNegativeReplace(Preprocessing):
         return df
 
 
-class MinValueImputation(Preprocessing):
+class MissingValueImputation(Preprocessing):
+    def __init__(self, study_design):
+        self.study_design = study_design
+
     def process(self, df):
-        df = df.dropna(axis = 0, how = 'all')    
+        df = df.dropna(axis = 0, how = 'all')
+        
+        for grp1, grp2 in [('case', 'control'), ('control', 'case')]:
+            grp1_spl = self.study_design[grp1]['samples']
+            grp1_df = df.loc[:, grp1_spl].T
+            
+            isna = grp1_df.isna().sum()
+            nan_prop = isna.loc[isna != 0]/len(grp1_df)
+            alignid = nan_prop.loc[nan_prop == 1].index.values
+            
+            if len(alignid) != 0:
+                grp2_spl = self.study_design[grp2]['samples']
+                replacement_value = df.loc[alignid, grp2_spl].min(axis=1) * 0.1
+
+                df.loc[alignid, grp1_spl] = replacement_value
+
         return df
 
 
@@ -32,7 +50,9 @@ class RowAverageImputation(Preprocessing):
             samples = grp['samples']
             # if group values not all zeros, replace the zeros with mean of group
             group_df = df.loc[:, samples]
-            df.loc[:, samples] = group_df.mask(group_df.isnull(), group_df.mean(axis=1), axis=0)
+            df.loc[:, samples] = group_df.mask(group_df.isna(),
+                                               group_df.mean(axis=1), axis=0)
+
         return df
 
 
