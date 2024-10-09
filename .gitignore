@@ -20,3 +20,11 @@ olopath/__pycache__/oloutils.cpython-39.pyc
 olopath/__pycache__/PATHAnalysis.cpython-39.pyc
 olopath/__pycache__/preprocessing.cpython-39.pyc
 olopath/__pycache__/variables.cpython-39.pyc
+notebooks/diff_hsa.csv
+notebooks/diff_mmu.csv
+notebooks/hsa_nmolecules_red.csv
+notebooks/hsa_nmolecules.csv
+notebooks/mmu_nmolecules_red.csv
+notebooks/mmu_nmolecules.csv
+notebooks/non(1).txt
+notebooks/pathways_counts.csv
