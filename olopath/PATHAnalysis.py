@@ -17,13 +17,15 @@ class PATHAnalysis(object):
 
         self.data = data
 
-    def get_results(self):
+    def get_results(self, filter_by_hits=1):
         intensity_df = self.data.intensity_df
         processed_intensity_df = self.preprocess_data(intensity_df)
         activity_df = self.calculate_pathway_activity(processed_intensity_df)
         pvalues_df = self.compute_pvalues(activity_df)
         coverage_df = self.compute_pathways_coverage(pvalues_df)
         pathway_df = self.compute_pathway_significance(coverage_df)
+
+        pathway_df = self.filter_by_min_hits(pathway_df, filter_by_hits)
 
         metabolites_df = self.get_metabolites_df()
 
@@ -134,6 +136,17 @@ class PATHAnalysis(object):
             pathway_significance.append(sf)
         
         df[PATH_SIG] = pathway_significance
+
+        return df
+
+
+    def filter_by_min_hits(self, df, filter_by_hits):
+        paths_to_remove = df.loc[df[HITS] <= filter_by_hits, :].index.to_list()
+
+        df = df.drop(index=paths_to_remove)
+
+        for pathid in paths_to_remove:
+            del self.data.pathways_in_data[pathid]
 
         return df
 
