@@ -16,6 +16,8 @@ class PATHAnalysis(object):
         """
 
         self.data = data
+        self.filtered_pathways = self.data.pathways_in_data.copy()
+
 
     def get_results(self, filter_by_hits=1):
         intensity_df = self.data.intensity_df
@@ -146,13 +148,13 @@ class PATHAnalysis(object):
         df = df.drop(index=paths_to_remove)
 
         for pathid in paths_to_remove:
-            del self.data.pathways_in_data[pathid]
+            del self.filtered_pathways[pathid]
 
         return df
 
 
     def get_metabolites_df(self):
-        metabolites_df = pd.DataFrame(self.data.pathways_in_data).T
+        metabolites_df = pd.DataFrame(self.filtered_pathways).T
         metabolites_df.index.name = PATHID
         metabolites_df.rename(columns={'name': PATHNM,
                                        'alignid': ALIGNID}, inplace=True)
