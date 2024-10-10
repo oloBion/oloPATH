@@ -28,3 +28,7 @@ notebooks/mmu_nmolecules_red.csv
 notebooks/mmu_nmolecules.csv
 notebooks/non(1).txt
 notebooks/pathways_counts.csv
+olopath/__pycache__/__init__.cpython-313.pyc
+olopath/__pycache__/DataObj.cpython-313.pyc
+olopath/__pycache__/oloutils.cpython-313.pyc
+olopath/__pycache__/variables.cpython-313.pyc
