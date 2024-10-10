@@ -4,13 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oloPATH"
-version = "1.0"
+version = "1.1"
 authors = [
   { name="Neus Pou Amengual", email="np@olobion.ai" },
 ]
 description = "Package for metabolomic pathways analysis"
 readme = "README.md"
 requires-python = ">=3.10"
+dependencies = [
+	'scipy',
+	'numpy',
+	'pandas',
+	'scikit-learn'
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
