@@ -4,6 +4,7 @@ setup.py
 oloPATH.egg-info/PKG-INFO
 oloPATH.egg-info/SOURCES.txt
 oloPATH.egg-info/dependency_links.txt
+oloPATH.egg-info/requires.txt
 oloPATH.egg-info/top_level.txt
 olopath/DataObj.py
 olopath/PATHAnalysis.py
