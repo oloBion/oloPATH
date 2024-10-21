@@ -4,7 +4,7 @@ REQUIREMENTS = ['scipy', 'numpy','pandas', 'scikit-learn']
 
 setup(
     name='oloPATH',
-    version='1.1',
+    version='1.2',
     description='Package for metabolomic pathways analysis',
     author='Neus Pou Amengual',
     author_email='np@olobion.ai',
