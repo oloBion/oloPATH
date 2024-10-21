@@ -34,3 +34,14 @@ olopath/__pycache__/oloutils.cpython-313.pyc
 olopath/__pycache__/variables.cpython-313.pyc
 olopath/__pycache__/PATHAnalysis.cpython-313.pyc
 olopath/__pycache__/preprocessing.cpython-313.pyc
+notebooks/hsa_repeated_paths_filtered.json
+notebooks/hsa_repeated_paths.json
+notebooks/repeated_paths.ipynb
+olopath/__pycache__/DataObj.cpython-311.pyc
+olopath/__pycache__/PATHAnalysis.cpython-311.pyc
+olopath/__pycache__/preprocessing.cpython-311.pyc
+tests/__pycache__/test_olopath.cpython-311-pytest-8.3.3.pyc
+olopath/__pycache__/DataObj.cpython-311.pyc
+olopath/__pycache__/DataObj.cpython-311.pyc
+olopath/__pycache__/PATHAnalysis.cpython-311.pyc
+olopath/__pycache__/preprocessing.cpython-311.pyc
