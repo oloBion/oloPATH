@@ -57,7 +57,10 @@ class PATHAnalysis(object):
         for pathid, values in self.data.pathways_in_data.items():
             pathnm = values['name']
             alignid = values['alignid']
-            data = intensity_df.loc[alignid]
+            try:
+                data = intensity_df.loc[alignid]
+            except KeyError:
+                continue
             try:
                 w, d, c = np.linalg.svd(np.array(data))
             except np.linalg.LinAlgError:
@@ -78,6 +81,8 @@ class PATHAnalysis(object):
         :return: a df containing pathway id, pathway names and p-values
         """
         study_design = self.data.study_design
+
+        print(activity_df)
 
         case_samples = study_design['case']['samples']
         case_df = activity_df.loc[:, case_samples]
