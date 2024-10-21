@@ -47,6 +47,8 @@ class DataSource(object):
 
         self.annotation_molid_df = self.get_molid_from_inchikey()
 
+        self.inchikey_db = self.get_inchikey_db()
+
         self.mols_in_pathways = self.molecules_in_pathways()
 
         self.pathways_in_data = self.pathways_in_dataset()
@@ -82,6 +84,20 @@ class DataSource(object):
             annotation_molid_df.loc[alignid, MOLNM] = molnm
         annotation_molid_df = annotation_molid_df[[MOLID, MOLNM]].dropna()
         return annotation_molid_df
+    
+
+    def get_inchikey_db(self):
+        pathways_in_inchikeys = defaultdict(lambda: defaultdict(set),
+                                                    defaultdict(set))
+        for molid in self.molecules.keys():
+            try:
+                inchikey = self.molecules[molid]['inchikey']
+                pathways = self.molecules[molid]['pathways']
+                pathways_in_inchikeys[inchikey]['pathways'].update(pathways)
+                pathways_in_inchikeys[inchikey]['molid'].add(molid)
+            except KeyError:
+                continue
+        return pathways_in_inchikeys
 
 
     def molecules_in_pathways(self):
@@ -95,9 +111,9 @@ class DataSource(object):
 
     def pathways_in_dataset(self):
         pathways_in_dataset = {}
-        for alignid, row in self.annotation_molid_df.iterrows():
-            molid = row[MOLID]
-            pathways = self.molecules[molid]['pathways']
+        for alignid, row in self.annotation_df.iterrows():
+            inchik = row[INCHIKEY]
+            pathways = self.inchikey_db[inchik]['pathways']
             for path in pathways:
                 if path not in pathways_in_dataset.keys():
                     name = self.pathways[path]['name']
@@ -106,5 +122,4 @@ class DataSource(object):
                 if alignid not in pathways_in_dataset[path]['alignid']:
                     pathways_in_dataset[path]['alignid'].append(alignid)
         return pathways_in_dataset
-
 

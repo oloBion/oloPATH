@@ -4,7 +4,7 @@ from scipy.stats import ttest_ind
 from scipy.stats import hypergeom
 import olopath.preprocessing as pcss
 from olopath.variables import PATHID, PATHNM, PVALUE, PATH_COM, HITS, PATH_COV, \
-    PATH_SIG, ALIGNID
+    PATH_SIG, ALIGNID, INCHIKEY, MOLID
 
 
 class PATHAnalysis(object):
@@ -153,6 +153,24 @@ class PATHAnalysis(object):
         return df
 
 
+    def get_molid_from_inchikey(self, df):
+        for indx, row in df.iterrows():
+            pathid = row[PATHID]
+            inchk = row[INCHIKEY]
+            inch_chebids = self.data.inchikey_db[inchk]['molid']
+            if len(inch_chebids) > 1:
+                filtered_chebid = []
+                for chebid in inch_chebids:
+                    if chebid in self.data.mols_in_pathways[pathid]:
+                        filtered_chebid.append(chebid)
+                df.loc[(df[PATHID] == pathid) &
+                       (df[INCHIKEY] == inchk), MOLID] = filtered_chebid[0]
+            else:
+                df.loc[(df[PATHID] == pathid) &
+                       (df[INCHIKEY] == inchk), MOLID] = list(inch_chebids)[0]
+        return df
+    
+
     def get_metabolites_df(self):
         metabolites_df = pd.DataFrame(self.filtered_pathways).T
         metabolites_df.index.name = PATHID
@@ -161,10 +179,12 @@ class PATHAnalysis(object):
         metabolites_df.reset_index(inplace=True)
         metabolites_df = metabolites_df.explode(ALIGNID)
 
-        annotation_molid_df = self.data.annotation_molid_df
+        annotation_df = self.data.annotation_df
 
-        metabolites_df = pd.merge(metabolites_df, annotation_molid_df,
+        metabolites_df = pd.merge(metabolites_df, annotation_df,
                                   on=ALIGNID)
         metabolites_df.rename(columns={'name': PATHNM}, inplace=True)
+
+        metabolites_df = self.get_molid_from_inchikey(metabolites_df)
 
         return metabolites_df
