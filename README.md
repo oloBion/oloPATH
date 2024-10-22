@@ -38,7 +38,7 @@ oloPATH requires the following input data in CSV format:
 
 ## Species databases structure
 
-Each database consists of three dictionaries: `molecules` and `pathways`.
+Each database consists of two dictionaries: `molecules` and `pathways`.
 
 - `molecules` dictionary has ChEBI or PlantCyc molecules identifiers as keys and dictionaries containing the molecule name, short InChiKey and associated Reactome or PlantCyc pathways identfiers as values.
 
