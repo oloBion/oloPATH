@@ -4,7 +4,7 @@ from scipy.stats import ttest_ind
 from scipy.stats import hypergeom
 import olopath.preprocessing as pcss
 from olopath.variables import PATHID, PATHNM, PVALUE, PATH_COM, HITS, PATH_COV, \
-    PATH_SIG, ALIGNID, INCHIKEY, MOLID
+    PATH_SIG, ALIGNID, INCHIKEY, MOLID, MOLNM
 
 
 class PATHAnalysis(object):
@@ -29,7 +29,11 @@ class PATHAnalysis(object):
 
         pathway_df = self.filter_by_min_hits(pathway_df, filter_by_hits)
 
-        metabolites_df = self.get_metabolites_df()
+        if len(pathway_df) != 0:
+            metabolites_df = self.get_metabolites_df()
+        else:
+            metabolites_df = pd.DataFrame(columns=[PATHID, PATHNM, ALIGNID,
+                                                   INCHIKEY, MOLNM, MOLID])
 
         return pathway_df, metabolites_df
         
