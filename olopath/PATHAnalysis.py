@@ -35,11 +35,6 @@ class PATHAnalysis(object):
         
 
     def preprocess_data(self, df):
-        study_design = self.data.study_design
-
-        df = pcss.ZeroAndNegativeReplace().process(df)
-        df = pcss.MissingValueImputation(study_design).process(df)
-        df = pcss.RowAverageImputation(study_design).process(df)
         df = pcss.LogNormalisation().process(df)
         df = pcss.ZScoreNormalisation().process(df)
 
@@ -57,10 +52,7 @@ class PATHAnalysis(object):
         for pathid, values in self.data.pathways_in_data.items():
             pathnm = values['name']
             alignid = values['alignid']
-            try:
-                data = intensity_df.loc[alignid]
-            except KeyError:
-                continue
+            data = intensity_df.loc[alignid]
             try:
                 w, d, c = np.linalg.svd(np.array(data))
             except np.linalg.LinAlgError:
@@ -81,8 +73,6 @@ class PATHAnalysis(object):
         :return: a df containing pathway id, pathway names and p-values
         """
         study_design = self.data.study_design
-
-        print(activity_df)
 
         case_samples = study_design['case']['samples']
         case_df = activity_df.loc[:, case_samples]
@@ -162,7 +152,7 @@ class PATHAnalysis(object):
         for indx, row in df.iterrows():
             pathid = row[PATHID]
             inchk = row[INCHIKEY]
-            inch_chebids = self.data.inchikey_db[inchk]['molid']
+            inch_chebids = self.data.inchikey[inchk]['molid']
             if len(inch_chebids) > 1:
                 filtered_chebid = []
                 for chebid in inch_chebids:
