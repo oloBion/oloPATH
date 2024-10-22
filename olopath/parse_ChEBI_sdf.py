@@ -42,7 +42,7 @@ if __name__ == "__main__":
             name = f.readline(num+1).strip()
             molecules[chebid]['name'] = name
         if line.startswith("> <InChIKey>"):
-            inchk = f.readline(num+1).strip().split('-', 1)[0]
+            inchk = f.readline(num+1).strip()
             molecules[chebid]['inchikey'] = inchk
 
     sys.stderr.write("%d molecules found \n" % len(molecules))
