@@ -38,9 +38,9 @@ oloPATH requires the following input data in CSV format:
 
 ## Species databases structure
 
-Each database consists of three dictionaries: `molecules`, `inchikey` and `pathways`.
+Each database consists of three dictionaries: `molecules` and `pathways`.
 
-- `molecules` dictionary has ChEMI molecules identifiers as keys and dictionaries containing the molecule name, short InChiKey and associated Reactome pathways identfiers as values.
+- `molecules` dictionary has ChEBI or PlantCyc molecules identifiers as keys and dictionaries containing the molecule name, short InChiKey and associated Reactome or PlantCyc pathways identfiers as values.
 
 ```
 "molecules": {"10055": {"name": "Xamoterol",
@@ -57,15 +57,7 @@ Each database consists of three dictionaries: `molecules`, `inchikey` and `pathw
 
 <br>
 
-- `inchikey` dictionary has short InChiKey as keys and lists containing the ChEMI identifiers associated as values.
-
-```
-"inchikey": {"DXPOSRCHIDYWHW": ["10055"]}
-```
-
-<br>
-
-- `pathways` dictionary has Reactome pathways identifiers as keys and dictionaries containing the pathway name as values.
+- `pathways` dictionary has Reactome or PlantCyc pathways identifiers as keys and dictionaries containing the pathway name as values.
 
 ```
 "pathways": {"R-HSA-162582": {"name": "Signal Transduction"},
