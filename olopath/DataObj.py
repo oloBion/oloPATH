@@ -46,7 +46,7 @@ class DataSource(object):
 
         self.molecules = self.database['molecules']
         self.pathways = self.database['pathways']
-        self.inchikey = self.get_inchikey_db()
+        self.inchikey = self.create_inchikey_db()
 
         self.annotation_molid_df = self.get_molid_from_inchikey()
 
@@ -94,12 +94,12 @@ class DataSource(object):
         return annotation_molid_df
     
 
-    def get_inchikey_db(self):
+    def create_inchikey_db(self):
         pathways_in_inchikeys = defaultdict(lambda: defaultdict(set),
                                                     defaultdict(set))
         for molid in self.molecules.keys():
             try:
-                inchikey = self.molecules[molid]['inchikey']
+                inchikey = self.molecules[molid]['inchikey'].split('-', 1)[0]
                 pathways = self.molecules[molid]['pathways']
                 pathways_in_inchikeys[inchikey]['pathways'].update(pathways)
                 pathways_in_inchikeys[inchikey]['molid'].add(molid)
