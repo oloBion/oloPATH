@@ -65,7 +65,6 @@ if __name__ == "__main__":
     sys.stderr.write("Creating %s database... \n" % species)
 
     organism_database = {'molecules': {},
-                         'inchikey': {},
                          'pathways': reactome_pathways}
     
     for mol in ch2reactome.keys():
@@ -73,9 +72,6 @@ if __name__ == "__main__":
             organism_database['molecules'][mol] = chmolecules[mol]
             organism_database['molecules'][mol]['pathways'] = ch2reactome[mol]
             inch = chmolecules[mol]['inchikey']
-            if inch not in organism_database['inchikey'].keys():
-                organism_database['inchikey'][inch] = []
-            insort(organism_database['inchikey'][inch], mol)
         except KeyError:
             continue
     
