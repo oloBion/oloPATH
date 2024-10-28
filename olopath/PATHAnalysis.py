@@ -20,12 +20,9 @@ class PATHAnalysis(object):
 
 
     def get_results(self, filter_by_hits=1):
-        intensity_df = self.data.intensity_df
-        processed_intensity_df = self.preprocess_data(intensity_df)
-        activity_df = self.calculate_pathway_activity(processed_intensity_df)
-        pvalues_df = self.compute_pvalues(activity_df)
-        coverage_df = self.compute_pathways_coverage(pvalues_df)
-        pathway_df = self.compute_pathway_significance(coverage_df)
+        pathway_df = self.create_pathway_dataframe()
+        pathway_df = self.compute_pathways_coverage(pathway_df)
+        pathway_df = self.compute_pathway_significance(pathway_df)
 
         pathway_df = self.filter_by_min_hits(pathway_df, filter_by_hits)
 
@@ -44,78 +41,22 @@ class PATHAnalysis(object):
 
         return df
 
-    def calculate_pathway_activity(self, intensity_df):
-        """
-        Calculates pathway activity given a dataframe of standardized
-        intensities
-        :param intensity_df: a standardized dataframe of peak intensites
-        :return: a dataframe with pathway names (rows) and the SVD activity
-        levels for the samples (columns)
-        """
-        activity_df = []
+
+    def create_pathway_dataframe(self):
+        df = []
         for pathid, values in self.data.pathways_in_data.items():
             pathnm = values['name']
-            alignid = values['alignid']
-            data = intensity_df.loc[alignid]
-            try:
-                w, d, c = np.linalg.svd(np.array(data))
-            except np.linalg.LinAlgError:
-                w, d, c = np.linalg.svd(np.array(data))
-            transformed_data = [pathid, pathnm]
-            transformed_data.extend(c[0])
-            activity_df.append(transformed_data)
-        column_names = [PATHID, PATHNM]
-        column_names.extend(intensity_df.columns)
-        activity_df = pd.DataFrame(activity_df,
-                                   columns=column_names).set_index(PATHID)
-        return activity_df
+            hits = len(values['alignid'])
+            pathcpds = len(self.data.mols_in_pathways[pathid])
+            data = [pathid, pathnm, hits, pathcpds]
+            
+            df.append(data)
+        column_names = [PATHID, PATHNM, HITS, PATH_COM]
+        df = pd.DataFrame(df, columns=column_names).set_index(PATHID)
+        return df
 
-    def compute_pvalues(self, activity_df):
-        """
-        Obtains p-values dataframe
-        :param activity_df: activity dataframe
-        :return: a df containing pathway id, pathway names and p-values
-        """
-        study_design = self.data.study_design
-
-        case_samples = study_design['case']['samples']
-        case_df = activity_df.loc[:, case_samples]
-
-        control_samples = study_design['control']['samples']
-        control_df = activity_df.loc[:, control_samples]
-
-        pvalues = ttest_ind(case_df, control_df, axis=1)
-
-        pvalues_df = activity_df[PATHNM].to_frame()
-        pvalues_df[PVALUE] = pvalues.pvalue
-
-        return pvalues_df
-
-    def all_pathways_molecules_counts(self, pathway_ids):
-        counts = []
-        for pathid in pathway_ids:
-            mols = len(self.data.mols_in_pathways[pathid])
-            counts.append(mols)
-        return counts
-    
-    def identified_pathways_molecules_counts(self, pathway_ids):
-        counts = []
-        for pathid in pathway_ids:
-            mols = len(self.data.pathways_in_data[pathid]['alignid'])
-            counts.append(mols)
-        return counts
 
     def compute_pathways_coverage(self, df):
-        pathways_ids = df.index
-
-        all_molecules_per_pathway =\
-            self.all_pathways_molecules_counts(pathways_ids)
-        df[PATH_COM] = all_molecules_per_pathway
-
-        identified_molecules_per_pathway =\
-            self.identified_pathways_molecules_counts(pathways_ids)
-        df[HITS] = identified_molecules_per_pathway
-
         df[PATH_COV] = ((df[HITS]/df[PATH_COM]) * 100).round(2)
 
         return df
@@ -136,7 +77,7 @@ class PATHAnalysis(object):
             sf = hypergeom.sf(k - 1, M, n, N)
             pathway_significance.append(sf)
         
-        df[PATH_SIG] = pathway_significance
+        df[PVALUE] = pathway_significance
 
         return df
 
