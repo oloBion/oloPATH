@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 from scipy.stats import ttest_ind
-from scipy.stats import hypergeom
+from scipy.stats import hypergeom, fisher_exact
+from statsmodels.stats.multitest import multipletests
 import olopath.preprocessing as pcss
 from olopath.variables import PATHID, PATHNM, PVALUE, PATH_COM, HITS, PATH_COV, \
     PATH_SIG, ALIGNID, INCHIKEY, MOLID, MOLNM
@@ -23,6 +24,7 @@ class PATHAnalysis(object):
         pathway_df = self.create_pathway_dataframe()
         pathway_df = self.compute_pathways_coverage(pathway_df)
         pathway_df = self.compute_pathway_significance(pathway_df)
+        pathway_df = self.correct_pvalue(pathway_df)
 
         pathway_df = self.filter_by_min_hits(pathway_df, filter_by_hits)
 
@@ -78,6 +80,14 @@ class PATHAnalysis(object):
             pathway_significance.append(sf)
         
         df[PVALUE] = pathway_significance
+
+        return df
+    
+
+    def correct_pvalue(self, df, alpha=0.05, method="fdr_bh"):
+        _, padj, _, _ = multipletests(df[PVALUE], alpha, method)
+
+        df["%s (corrected)" % PVALUE] = padj
 
         return df
 
