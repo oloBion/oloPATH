@@ -1,6 +1,6 @@
 import os
 import olopath.oloutils as ut
-from olopath.variables import MOLID, INCHIKEY, MOLNM
+from olopath.variables import MOLID, INCHIKEY, MOLNM, ORIG_INCHIK
 from collections import defaultdict
 import olopath.preprocessing as pcss
 
@@ -90,13 +90,34 @@ class DataSource(object):
         annotation_molid_df = self.annotation_df.copy()
 
         for alignid, row in annotation_molid_df.iterrows():
+            orig_inchik = row[ORIG_INCHIK]
             inchk = row[INCHIKEY]
-            molnm = row[MOLNM]
-            molid = list(self.inchikey[inchk]['molid'])
-            if len(molid) > 0:
-                molid = molid[0]
+            molid_first = list(self.inchikey[inchk]['molid'])
+            if len(molid_first) == 1:
+                molid = molid_first[0]
                 annotation_molid_df.loc[alignid, MOLID] = molid
-                annotation_molid_df.loc[alignid, MOLNM] = molnm
+            elif len(molid_first) > 1:
+                twop_inchik = "-".join(orig_inchik.split("-", 2)[:2])
+                molid_second = []
+                for id in molid_first:
+                    db_inchik = self.molecules[id]["inchikey"]
+                    db_twop_inchik = "-".join(db_inchik.split("-", 2)[:2])
+                    if db_twop_inchik == twop_inchik:
+                        molid_second.append(id)
+                if len(molid_second) == 1:
+                    molid = molid_second[0]
+                    annotation_molid_df.loc[alignid, MOLID] = molid
+                elif len(molid_second) > 1:
+                        molid_third = []
+                        for id in molid_second:
+                            db_inchik = self.molecules[id]["inchikey"]
+                            if db_inchik == orig_inchik:
+                                molid_third.append(id)
+                        if len(molid_third) == 1:
+                            molid = molid_third[0]
+                            annotation_molid_df.loc[alignid, MOLID] = molid
+                        # else:
+                            ### ? alanine problem
 
         annotation_molid_df = annotation_molid_df[[MOLID, MOLNM]].dropna()
         return annotation_molid_df
@@ -127,17 +148,15 @@ class DataSource(object):
 
     def pathways_in_dataset(self):
         pathways_in_dataset = {}
-        for alignid in self.annotation_df.index:
-            inchik = self.annotation_df.loc[alignid, INCHIKEY]
-            pathways = self.inchikey[inchik]['pathways']
+        for alignid, row in self.annotation_molid_df.iterrows():
+            molid = row[MOLID]
+            pathways = self.molecules[molid]['pathways']
             for path in pathways:
                 if path not in pathways_in_dataset.keys():
                     name = self.pathways[path]['name']
                     pathways_in_dataset[path] = {'name': name,
-                                                 'alignid': [],
-                                                 'inchikey': set()}
+                                                 'alignid': []}
                 if alignid not in pathways_in_dataset[path]['alignid']:
                     pathways_in_dataset[path]['alignid'].append(alignid)
-                    pathways_in_dataset[path]['inchikey'].add(inchik)
         return pathways_in_dataset
 

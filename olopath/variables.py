@@ -2,6 +2,7 @@
 GROUP = "Group"
 SAMPLE = "Sample"
 INCHIKEY = 'INCHIKEY'
+ORIG_INCHIK = "Original INCHIKEY"
 MOLID = 'Metabolite ID'
 MOLNM = "Metabolite name"
 ALIGNID = 'Alignment ID'

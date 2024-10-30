@@ -1,7 +1,7 @@
 import gzip
 import json
 import pandas as pd
-from olopath.variables import INCHIKEY, MOLNM, ALIGNID, GROUP, SAMPLE
+from olopath.variables import INCHIKEY, MOLNM, ALIGNID, GROUP, SAMPLE, ORIG_INCHIK
 
 
 def load_json(json_file, compressed=False):
@@ -27,6 +27,7 @@ def load_data(data, study_design, case, control):
 
     annotation_df = data[[ALIGNID, INCHIKEY, MOLNM]]
     annotation_df = annotation_df.set_index(ALIGNID)
+    annotation_df[ORIG_INCHIK] = annotation_df[INCHIKEY]
     annotation_df[INCHIKEY] =\
         annotation_df[INCHIKEY].apply(lambda x: x.split("-")[0])
     intensity_df = data.drop([INCHIKEY, MOLNM], axis=1)
