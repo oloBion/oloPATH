@@ -39,7 +39,7 @@ class DataSource(object):
         intensity_df = self.filter_intesities_by_groups(intensity_df,
                                                         study_design)
         self.intensity_df = self.preprocess_data(intensity_df)
-        self.annotation_df = annotation_df
+        self.annotation_df = self.filter_annotation_with_preprocessed_data(annotation_df)
         self.species = species.capitalize()
 
         self.database = Database(species).load()
@@ -54,7 +54,7 @@ class DataSource(object):
 
         self.pathways_in_data = self.pathways_in_dataset()
 
-        self.species_molid_count = len(self.database['molecules'])
+        self.species_molid_count = len(self.molecules)
         self.dataset_molid_count = len(self.annotation_molid_df)
 
     
@@ -74,6 +74,14 @@ class DataSource(object):
         df = pcss.ZeroAndNegativeReplace().process(df)
         df = pcss.MissingValueImputation(study_design).process(df)
         df = pcss.RowAverageImputation(study_design).process(df)
+
+        return df
+    
+
+    def filter_annotation_with_preprocessed_data(self, df):
+        alignids = self.intensity_df.index
+
+        df = df.loc[alignids]
 
         return df
 
@@ -119,7 +127,7 @@ class DataSource(object):
 
     def pathways_in_dataset(self):
         pathways_in_dataset = {}
-        for alignid in self.intensity_df.index:
+        for alignid in self.annotation_df.index:
             inchik = self.annotation_df.loc[alignid, INCHIKEY]
             pathways = self.inchikey[inchik]['pathways']
             for path in pathways:
