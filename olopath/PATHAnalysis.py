@@ -48,7 +48,7 @@ class PATHAnalysis(object):
         df = []
         for pathid, values in self.data.pathways_in_data.items():
             pathnm = values['name']
-            hits = len(values['alignid'])
+            hits = len(values['inchikey'])
             pathcpds = len(self.data.mols_in_pathways[pathid])
             data = [pathid, pathnm, hits, pathcpds]
             
@@ -124,6 +124,7 @@ class PATHAnalysis(object):
     def get_metabolites_df(self):
         metabolites_df = pd.DataFrame(self.filtered_pathways).T
         metabolites_df.index.name = PATHID
+        metabolites_df = metabolites_df.drop(columns='inchikey')
         metabolites_df.rename(columns={'name': PATHNM,
                                        'alignid': ALIGNID}, inplace=True)
         metabolites_df.reset_index(inplace=True)

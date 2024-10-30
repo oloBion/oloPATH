@@ -134,8 +134,10 @@ class DataSource(object):
                 if path not in pathways_in_dataset.keys():
                     name = self.pathways[path]['name']
                     pathways_in_dataset[path] = {'name': name,
-                                                 'alignid': []}
+                                                 'alignid': [],
+                                                 'inchikey': set()}
                 if alignid not in pathways_in_dataset[path]['alignid']:
                     pathways_in_dataset[path]['alignid'].append(alignid)
+                    pathways_in_dataset[path]['inchikey'].add(inchik)
         return pathways_in_dataset
 
