@@ -5,6 +5,7 @@ INCHIKEY = 'INCHIKEY'
 ORIG_INCHIK = "Original INCHIKEY"
 MOLID = 'Metabolite ID'
 MOLNM = "Metabolite name"
+DB_MOLNM = "Database name"
 ALIGNID = 'Alignment ID'
 PATHID = 'Pathway ID'
 PATHNM = 'Pathway Name'

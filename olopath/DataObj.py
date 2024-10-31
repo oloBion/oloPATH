@@ -1,6 +1,6 @@
 import os
 import olopath.oloutils as ut
-from olopath.variables import MOLID, INCHIKEY, MOLNM, ORIG_INCHIK
+from olopath.variables import MOLID, INCHIKEY, MOLNM, ORIG_INCHIK, DB_MOLNM
 from collections import defaultdict
 import olopath.preprocessing as pcss
 
@@ -95,7 +95,9 @@ class DataSource(object):
             molid_first = list(self.inchikey[inchk]['molid'])
             if len(molid_first) == 1:
                 molid = molid_first[0]
+                dbnme = self.molecules[molid]["name"]
                 annotation_molid_df.loc[alignid, MOLID] = molid
+                annotation_molid_df.loc[alignid, DB_MOLNM] = dbnme
             elif len(molid_first) > 1:
                 twop_inchik = "-".join(orig_inchik.split("-", 2)[:2])
                 molid_second = []
@@ -106,7 +108,9 @@ class DataSource(object):
                         molid_second.append(id)
                 if len(molid_second) == 1:
                     molid = molid_second[0]
+                    dbnme = self.molecules[molid]["name"]
                     annotation_molid_df.loc[alignid, MOLID] = molid
+                    annotation_molid_df.loc[alignid, DB_MOLNM] = dbnme
                 elif len(molid_second) > 1:
                         molid_third = []
                         for id in molid_second:
@@ -115,7 +119,9 @@ class DataSource(object):
                                 molid_third.append(id)
                         if len(molid_third) == 1:
                             molid = molid_third[0]
+                            dbnme = self.molecules[molid]["name"]
                             annotation_molid_df.loc[alignid, MOLID] = molid
+                            annotation_molid_df.loc[alignid, DB_MOLNM] = dbnme
                         else:
                             pathnum = 0
                             for id in molid_second:
@@ -123,7 +129,9 @@ class DataSource(object):
                                 if molpathws > pathnum:
                                     pathnum = molpathws
                                     molid = id
+                                    dbnme = self.molecules[molid]["name"]
                             annotation_molid_df.loc[alignid, MOLID] = molid
+                            annotation_molid_df.loc[alignid, DB_MOLNM] = dbnme
                 else:
                     pathnum = 0
                     for id in molid_first:
@@ -131,9 +139,12 @@ class DataSource(object):
                         if molpathws > pathnum:
                             pathnum = molpathws
                             molid = id
+                            dbnme = self.molecules[molid]["name"]
                     annotation_molid_df.loc[alignid, MOLID] = molid
+                    annotation_molid_df.loc[alignid, DB_MOLNM] = dbnme
 
-        annotation_molid_df = annotation_molid_df[[MOLID, MOLNM]].dropna()
+        annotation_molid_df = annotation_molid_df[[MOLID, MOLNM,
+                                                   DB_MOLNM]].dropna()
         return annotation_molid_df
     
 
