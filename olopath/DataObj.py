@@ -116,8 +116,22 @@ class DataSource(object):
                         if len(molid_third) == 1:
                             molid = molid_third[0]
                             annotation_molid_df.loc[alignid, MOLID] = molid
-                        # else:
-                            ### ? alanine problem
+                        else:
+                            pathnum = 0
+                            for id in molid_second:
+                                molpathws = len(self.molecules[id]["pathways"])
+                                if molpathws > pathnum:
+                                    pathnum = molpathws
+                                    molid = id
+                            annotation_molid_df.loc[alignid, MOLID] = molid
+                else:
+                    pathnum = 0
+                    for id in molid_first:
+                        molpathws = len(self.molecules[id]["pathways"])
+                        if molpathws > pathnum:
+                            pathnum = molpathws
+                            molid = id
+                    annotation_molid_df.loc[alignid, MOLID] = molid
 
         annotation_molid_df = annotation_molid_df[[MOLID, MOLNM]].dropna()
         return annotation_molid_df
