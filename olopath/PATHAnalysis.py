@@ -5,7 +5,7 @@ from scipy.stats import hypergeom, fisher_exact
 from statsmodels.stats.multitest import multipletests
 import olopath.preprocessing as pcss
 from olopath.variables import PATHID, PATHNM, PVALUE, PATH_COM, HITS, PATH_COV, \
-    PATH_SIG, ALIGNID, INCHIKEY, MOLID, MOLNM
+    PATH_SIG, ALIGNID, INCHIKEY, ORIG_INCHIK, MOLID, MOLNM, DB_MOLNM
 
 
 class PATHAnalysis(object):
@@ -48,7 +48,7 @@ class PATHAnalysis(object):
         df = []
         for pathid, values in self.data.pathways_in_data.items():
             pathnm = values['name']
-            hits = len(values['alignid'])
+            hits = len(values['inchikey'])
             pathcpds = len(self.data.mols_in_pathways[pathid])
             data = [pathid, pathnm, hits, pathcpds]
             
@@ -104,35 +104,47 @@ class PATHAnalysis(object):
 
 
     def get_molid_from_inchikey(self, df):
-        for indx, row in df.iterrows():
+        for _, row in df.iterrows():
             pathid = row[PATHID]
             inchk = row[INCHIKEY]
-            inch_chebids = self.data.inchikey[inchk]['molid']
-            if len(inch_chebids) > 1:
-                filtered_chebid = []
-                for chebid in inch_chebids:
-                    if chebid in self.data.mols_in_pathways[pathid]:
-                        filtered_chebid.append(chebid)
+            inch_molids = self.data.inchikey[inchk]['molid']
+            if len(inch_molids) > 1:
+                filtered_molid = []
+                for id in inch_molids:
+                    if id in self.data.mols_in_pathways[pathid]:
+                        filtered_molid.append(id)
+                molid = filtered_molid[0]
+                molnm = self.data.molecules[molid]['name']
                 df.loc[(df[PATHID] == pathid) &
-                       (df[INCHIKEY] == inchk), MOLID] = filtered_chebid[0]
+                       (df[INCHIKEY] == inchk), (MOLID, DB_MOLNM)] = (molid,
+                                                                      molnm)
             else:
+                molid = list(inch_molids)[0]
+                molnm = self.data.molecules[molid]['name']
                 df.loc[(df[PATHID] == pathid) &
-                       (df[INCHIKEY] == inchk), MOLID] = list(inch_chebids)[0]
+                       (df[INCHIKEY] == inchk), (MOLID, DB_MOLNM)] = (molid,
+                                                                      molnm)
         return df
     
 
     def get_metabolites_df(self):
         metabolites_df = pd.DataFrame(self.filtered_pathways).T
         metabolites_df.index.name = PATHID
+        metabolites_df = metabolites_df.drop(columns='inchikey')
         metabolites_df.rename(columns={'name': PATHNM,
                                        'alignid': ALIGNID}, inplace=True)
         metabolites_df.reset_index(inplace=True)
         metabolites_df = metabolites_df.explode(ALIGNID)
 
-        annotation_molid_df = self.data.annotation_molid_df
+        annotation_df = self.data.annotation_df
 
-        metabolites_df = pd.merge(metabolites_df, annotation_molid_df,
+        metabolites_df = pd.merge(metabolites_df, annotation_df,
                                   on=ALIGNID)
         metabolites_df.rename(columns={'name': PATHNM}, inplace=True)
+
+        metabolites_df = self.get_molid_from_inchikey(metabolites_df)
+
+        metabolites_df[INCHIKEY] = metabolites_df[ORIG_INCHIK]
+        metabolites_df = metabolites_df.drop(columns=[ORIG_INCHIK])
 
         return metabolites_df

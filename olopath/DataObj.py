@@ -173,15 +173,17 @@ class DataSource(object):
 
     def pathways_in_dataset(self):
         pathways_in_dataset = {}
-        for alignid, row in self.annotation_molid_df.iterrows():
-            molid = row[MOLID]
-            pathways = self.molecules[molid]['pathways']
+        for alignid, row in self.annotation_df.iterrows():
+            inchik = row[INCHIKEY]
+            pathways = self.inchikey[inchik]['pathways']
             for path in pathways:
                 if path not in pathways_in_dataset.keys():
                     name = self.pathways[path]['name']
                     pathways_in_dataset[path] = {'name': name,
-                                                 'alignid': []}
+                                                 'alignid': [],
+                                                 'inchikey': set()}
                 if alignid not in pathways_in_dataset[path]['alignid']:
                     pathways_in_dataset[path]['alignid'].append(alignid)
+                    pathways_in_dataset[path]['inchikey'].add(inchik)
         return pathways_in_dataset
 
