@@ -10,6 +10,7 @@ ALIGNID = 'Alignment ID'
 PATHID = 'Pathway ID'
 PATHNM = 'Pathway Name'
 PVALUE = 'p-Value'
+FDR = "False Discovery Rate (FDR)"
 PATH_COM = "Pathway Compounds"
 HITS = "Hits"
 PATH_COV = "Pathway Coverage (%)"
