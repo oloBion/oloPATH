@@ -26,7 +26,7 @@ class Database(object):
 class DataSource(object):
 
     def __init__(self, intensity_df, annotation_df, study_design, species,
-                 preprocess=True, mode='1/10'):
+                 logscale=False, preprocess=True, mode='1/10'):
         """
         Creates a data source for oloPATH analysis
         :param intesities_df: a dataframe of peak intensities, where
@@ -48,7 +48,7 @@ class DataSource(object):
         self.annotation_df = self.filter_annotation_with_preprocessed_data(annotation_df)
         self.species = species.capitalize()
 
-        self.statistics_df = self.compute_pvalues()
+        self.statistics_df = self.compute_pvalues(logscale)
 
         self.database = Database(species).load()
 
@@ -94,7 +94,7 @@ class DataSource(object):
         return df
     
 
-    def compute_pvalues(self):
+    def compute_pvalues(self, logscale):
         study_design = self.study_design
         annotation_df = self.annotation_df
         intensity_df = self.intensity_df
@@ -109,7 +109,14 @@ class DataSource(object):
         fc = case_df.mean(axis=1) / control_df.mean(axis=1)
         fc2 = np.log2(fc)
 
-        pvalues = ttest_ind(case_df, control_df, axis=1)
+        if logscale:
+            case = pcss.LogNormalisation().process(case_df)
+            control = pcss.LogNormalisation().process(control_df)
+        else:
+            case = case_df
+            control = control_df
+
+        pvalues = ttest_ind(case, control, axis=1)
 
         stats_df = pd.DataFrame(data={FC2: fc2, PVALUE: pvalues.pvalue},
                                 index=intensity_df.index)
