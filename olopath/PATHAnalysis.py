@@ -36,13 +36,6 @@ class PATHAnalysis(object):
                                                    INCHIKEY, MOLNM, MOLID])
 
         return pathway_df, metabolites_df
-        
-
-    def preprocess_data(self, df):
-        df = pcss.LogNormalisation().process(df)
-        df = pcss.ZScoreNormalisation().process(df)
-
-        return df
 
 
     def create_pathway_dataframe(self):
