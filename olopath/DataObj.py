@@ -26,7 +26,7 @@ class Database(object):
 class DataSource(object):
 
     def __init__(self, intensity_df, annotation_df, study_design, species,
-                 logscale=False, preprocess=True, mode='1/10'):
+                 pvalue=0.05, logscale=False, preprocess=True, mode='1/10'):
         """
         Creates a data source for oloPATH analysis
         :param intesities_df: a dataframe of peak intensities, where
@@ -60,7 +60,7 @@ class DataSource(object):
 
         self.mols_in_pathways = self.molecules_in_pathways()
 
-        self.pathways_in_data = self.pathways_in_dataset()
+        self.pathways_in_data = self.pathways_in_dataset(pvalue)
 
         self.species_molid_count = len(self.molecules)
         self.dataset_molid_count = len(self.annotation_molid_df)
@@ -211,19 +211,23 @@ class DataSource(object):
         return molecules_in_pathways
 
 
-    def pathways_in_dataset(self):
+    def pathways_in_dataset(self, pvalue):
         pathways_in_dataset = {}
-        for alignid, row in self.annotation_df.iterrows():
+        for alignid, row in self.statistics_df.iterrows():
             inchik = row[INCHIKEY]
+            alignid_pvalue = row[PVALUE]
             pathways = self.inchikey[inchik]['pathways']
             for path in pathways:
                 if path not in pathways_in_dataset.keys():
                     name = self.pathways[path]['name']
                     pathways_in_dataset[path] = {'name': name,
                                                  'alignid': [],
-                                                 'inchikey': set()}
-                if alignid not in pathways_in_dataset[path]['alignid']:
+                                                 'inchikey': set(),
+                                                 'sign_inchikey': set()}
+                pathways_in_dataset[path]['inchikey'].add(inchik)
+                if alignid_pvalue <= pvalue:
                     pathways_in_dataset[path]['alignid'].append(alignid)
-                    pathways_in_dataset[path]['inchikey'].add(inchik)
+                    pathways_in_dataset[path]['sign_inchikey'].add(inchik)
+
         return pathways_in_dataset
 
