@@ -26,7 +26,7 @@ class Database(object):
 class DataSource(object):
 
     def __init__(self, intensity_df, annotation_df, study_design, species,
-                 pvalue=0.05, logscale=False, preprocess=True, mode='1/10'):
+                 pvalue=0.05, logscale=False, mode='1/10'):
         """
         Creates a data source for oloPATH analysis
         :param intesities_df: a dataframe of peak intensities, where
@@ -43,7 +43,7 @@ class DataSource(object):
         self.study_design = study_design
         intensity_df = self.filter_intesities_by_groups(intensity_df,
                                                         study_design)
-        if preprocess:
+        if self.check_missing_values(intensity_df):
             self.intensity_df = self.preprocess_data(intensity_df, mode)
         self.annotation_df = self.filter_annotation_with_preprocessed_data(annotation_df)
         self.species = species.capitalize()
@@ -65,6 +65,11 @@ class DataSource(object):
         self.species_molid_count = len(self.molecules)
         self.dataset_molid_count = len(self.annotation_molid_df)
 
+
+    def check_missing_values(self, df):
+        is0 = df.isin([0]).sum().sum()
+        isnan = df.isna().sum().sum()
+        return is0 != 0 or isnan != 0
     
     def filter_intesities_by_groups(self, df, study_design):
         case_samples = study_design['case']['samples']
