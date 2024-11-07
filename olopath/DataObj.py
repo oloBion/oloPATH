@@ -1,8 +1,12 @@
 import os
 import olopath.oloutils as ut
-from olopath.variables import MOLID, INCHIKEY, MOLNM, ORIG_INCHIK, DB_MOLNM
+from olopath.variables import MOLID, INCHIKEY, MOLNM, ORIG_INCHIK, DB_MOLNM, \
+    ALIGNID, PVALUE, FC2
 from collections import defaultdict
 import olopath.preprocessing as pcss
+import pandas as pd
+import numpy as np
+from scipy.stats import ttest_ind
 
 
 class Database(object):
@@ -43,6 +47,8 @@ class DataSource(object):
             self.intensity_df = self.preprocess_data(intensity_df, mode)
         self.annotation_df = self.filter_annotation_with_preprocessed_data(annotation_df)
         self.species = species.capitalize()
+
+        self.statistics_df = self.compute_pvalues()
 
         self.database = Database(species).load()
 
@@ -86,6 +92,31 @@ class DataSource(object):
         df = df.loc[alignids]
 
         return df
+    
+
+    def compute_pvalues(self):
+        study_design = self.study_design
+        annotation_df = self.annotation_df
+        intensity_df = self.intensity_df
+        
+
+        case_samples = study_design['case']['samples']
+        case_df = intensity_df.loc[:, case_samples]
+
+        control_samples = study_design['control']['samples']
+        control_df = intensity_df.loc[:, control_samples]
+
+        fc = case_df.mean(axis=1) / control_df.mean(axis=1)
+        fc2 = np.log2(fc)
+
+        pvalues = ttest_ind(case_df, control_df, axis=1)
+
+        stats_df = pd.DataFrame(data={FC2: fc2, PVALUE: pvalues.pvalue},
+                                index=intensity_df.index)
+        
+        stats_df = pd.merge(annotation_df, stats_df, on=ALIGNID)
+
+        return stats_df
 
 
     def get_molid_from_inchikey(self):

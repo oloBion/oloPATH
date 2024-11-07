@@ -5,7 +5,7 @@ from scipy.stats import hypergeom, fisher_exact
 from statsmodels.stats.multitest import multipletests
 import olopath.preprocessing as pcss
 from olopath.variables import PATHID, PATHNM, PVALUE, PATH_COM, HITS, PATH_COV, \
-    FDR, ALIGNID, INCHIKEY, ORIG_INCHIK, MOLID, MOLNM, DB_MOLNM
+    FDR, ALIGNID, INCHIKEY, ORIG_INCHIK, MOLID, MOLNM, DB_MOLNM, FC2
 
 
 class PATHAnalysis(object):
@@ -92,6 +92,22 @@ class PATHAnalysis(object):
         return df
 
 
+    def get_pathway_fold_change(self, df):
+        log_fold_change = []
+
+        pathway_ids = df.index
+
+        for pathid in pathway_ids:
+            alignid = self.data.pathways_in_data[pathid]["alignid"]
+            fc2 = self.data.statistics_df.loc[alignid, FC2].mean()
+
+            log_fold_change.append(fc2)
+        
+        df["%s mean" % FC2] = log_fold_change
+
+        return df
+
+
     def filter_by_min_hits(self, df, filter_by_hits):
         paths_to_remove = df.loc[df[HITS] <= filter_by_hits, :].index.to_list()
 
@@ -146,5 +162,10 @@ class PATHAnalysis(object):
 
         metabolites_df[INCHIKEY] = metabolites_df[ORIG_INCHIK]
         metabolites_df = metabolites_df.drop(columns=[ORIG_INCHIK])
+
+        statistics_df = self.data.statistics_df[[FC2, PVALUE]]
+
+        metabolites_df = pd.merge(metabolites_df, statistics_df,
+                                  on=ALIGNID)
 
         return metabolites_df
