@@ -45,13 +45,19 @@ class RowAverageImputation(Preprocessing):
     def __init__(self, study_design):
         self.study_design = study_design
 
-    def process(self, df):
+    def process(self, df, mode='1/10'):
         for grp in self.study_design.values():
             samples = grp['samples']
             # if group values not all zeros, replace the zeros with mean of group
             group_df = df.loc[:, samples]
+            if mode == '1/10':
+                replacement_value = 0.1 * group_df.min(axis=1)
+            elif mode == '1/5':
+                replacement_value = 0.2 * group_df.min(axis=1)
+            elif mode == '1':
+                replacement_value = 1
             df.loc[:, samples] = group_df.mask(group_df.isna(),
-                                               group_df.mean(axis=1), axis=0)
+                                               replacement_value, axis=0)
 
         return df
 

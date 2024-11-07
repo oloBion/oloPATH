@@ -21,7 +21,8 @@ class Database(object):
 
 class DataSource(object):
 
-    def __init__(self, intensity_df, annotation_df, study_design, species):
+    def __init__(self, intensity_df, annotation_df, study_design, species,
+                 preprocess=True, mode='1/10'):
         """
         Creates a data source for oloPATH analysis
         :param intesities_df: a dataframe of peak intensities, where
@@ -38,7 +39,8 @@ class DataSource(object):
         self.study_design = study_design
         intensity_df = self.filter_intesities_by_groups(intensity_df,
                                                         study_design)
-        self.intensity_df = self.preprocess_data(intensity_df)
+        if preprocess:
+            self.intensity_df = self.preprocess_data(intensity_df, mode)
         self.annotation_df = self.filter_annotation_with_preprocessed_data(annotation_df)
         self.species = species.capitalize()
 
@@ -68,12 +70,12 @@ class DataSource(object):
         return df
     
 
-    def preprocess_data(self, df):
+    def preprocess_data(self, df, mode):
         study_design = self.study_design
-        
+
         df = pcss.ZeroAndNegativeReplace().process(df)
         df = pcss.MissingValueImputation(study_design).process(df)
-        df = pcss.RowAverageImputation(study_design).process(df)
+        df = pcss.RowAverageImputation(study_design).process(df, mode)
 
         return df
     
