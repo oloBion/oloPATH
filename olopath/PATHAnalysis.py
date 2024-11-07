@@ -23,6 +23,7 @@ class PATHAnalysis(object):
     def get_results(self, filter_by_hits=1):
         pathway_df = self.create_pathway_dataframe()
         pathway_df = self.compute_pathways_coverage(pathway_df)
+        pathway_df = self.get_pathway_fold_change(pathway_df)
         pathway_df = self.compute_pathway_significance(pathway_df)
         pathway_df = self.correct_pvalue(pathway_df)
 
