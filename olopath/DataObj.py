@@ -45,6 +45,8 @@ class DataSource(object):
                                                         study_design)
         if self.check_missing_values(intensity_df):
             self.intensity_df = self.preprocess_data(intensity_df, mode)
+        else:
+            self.intensity_df = intensity_df
         self.annotation_df = self.filter_annotation_with_preprocessed_data(annotation_df)
         self.species = species.capitalize()
 
