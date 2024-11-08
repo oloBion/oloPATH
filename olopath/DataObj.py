@@ -50,7 +50,7 @@ class DataSource(object):
         self.annotation_df = self.filter_annotation_with_preprocessed_data(annotation_df)
         self.species = species.capitalize()
 
-        self.statistics_df = self.compute_pvalues(logscale)
+        self.statistics_df = self.compute_foldchange_and_pvalues(logscale)
 
         self.database = Database(species).load()
 
@@ -101,7 +101,7 @@ class DataSource(object):
         return df
     
 
-    def compute_pvalues(self, logscale):
+    def compute_foldchange_and_pvalues(self, logscale):
         study_design = self.study_design
         annotation_df = self.annotation_df
         intensity_df = self.intensity_df
