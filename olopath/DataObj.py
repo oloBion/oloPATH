@@ -123,7 +123,7 @@ class DataSource(object):
             case = case_df
             control = control_df
 
-        pvalues = ttest_ind(case, control, axis=1)
+        pvalues = ttest_ind(case, control, equal_var=False, axis=1)
 
         stats_df = pd.DataFrame(data={FC2: fc2, PVALUE: pvalues.pvalue},
                                 index=intensity_df.index)
