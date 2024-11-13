@@ -13,7 +13,8 @@ def run():
                                                              case='Group1',
                                                              control='Group2')
     
-    ds = DataSource(intensity_df, annotation_df, study_design, "Homo sapiens")
+    ds = DataSource(intensity_df, annotation_df, study_design, "Homo sapiens",
+                    pvalue=1, foldchange2=[0, 0])
 
     PATH = PATHAnalysis(ds)
     pathway_df, metabolites_df = PATH.get_results(filter_by_hits=1)
