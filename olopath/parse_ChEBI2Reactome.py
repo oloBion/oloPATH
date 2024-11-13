@@ -20,10 +20,16 @@ if __name__ == "__main__":
                         default= "./",
                         help="")
     
+    parser.add_argument('-rp', '--remove_pathways',
+                        dest= "remove_pathways",
+                        action= "store",
+                        default= "./",
+                        help="")
+    
     options = parser.parse_args()
 
-    if len(sys.argv) <= 2:
-        sys.stderr.write("No input or output provided. Please, try again. \n")
+    if len(sys.argv) <= 3:
+        sys.stderr.write("No input, output or pathways to remove provided. Please, try again. \n")
         exit()
 
     pathways = {}
@@ -31,7 +37,10 @@ if __name__ == "__main__":
     f = open(options.infile)
     sys.stderr.write("Loaded file: %s \n" % options.infile)
 
-    sys.stderr.write("Parsing file... \n")
+    pathw_remove = ut.load_json(options.remove_pathways, compressed=True)
+    sys.stderr.write("Loaded file: %s \n" % options.remove_pathways)
+
+    sys.stderr.write("Parsing files... \n")
 
     for line in f:
         line = line.strip()
@@ -49,7 +58,8 @@ if __name__ == "__main__":
             if chebid not in pathways[organism].keys():
                 pathways[organism][chebid] = []
             
-            pathways[organism][chebid].append(pathid)
+            if pathid not in pathw_remove[organism]["difference"]:
+                pathways[organism][chebid].append(pathid)
     
     for org in pathways.keys():
         sys.stderr.write("%d molecules present in %s pathways \n" %
