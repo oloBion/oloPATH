@@ -12,6 +12,7 @@ PATHNM = 'Pathway Name'
 PVALUE = 'p-Value'
 FC2 = "log2(FC)"
 FDR = "False Discovery Rate (FDR)"
+HOLM = "Holm-Bonferroni"
 PATH_COM = "Pathway Compounds"
 HITS = "Significant Hits"
 TOTAL_HITS = "Total Hits"

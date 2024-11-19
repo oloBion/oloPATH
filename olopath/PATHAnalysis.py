@@ -5,7 +5,8 @@ from scipy.stats import hypergeom, fisher_exact
 from statsmodels.stats.multitest import multipletests
 import olopath.preprocessing as pcss
 from olopath.variables import PATHID, PATHNM, PVALUE, PATH_COM, HITS, PATH_COV, \
-    FDR, ALIGNID, INCHIKEY, ORIG_INCHIK, MOLID, MOLNM, DB_MOLNM, TOTAL_HITS, FC2
+    FDR, ALIGNID, INCHIKEY, ORIG_INCHIK, MOLID, MOLNM, DB_MOLNM, TOTAL_HITS, \
+    FC2, HOLM
 
 
 class PATHAnalysis(object):
@@ -79,10 +80,12 @@ class PATHAnalysis(object):
         return df
     
 
-    def correct_pvalue(self, df, alpha=0.05, method="fdr_bh"):
-        _, padj, _, _ = multipletests(df[PVALUE], alpha, method)
+    def correct_pvalue(self, df, alpha=0.05):
+        fdr_padj = multipletests(df[PVALUE], alpha, "fdr_bh")
+        df[FDR] = fdr_padj[1]
 
-        df[FDR] = padj
+        holm_padj = multipletests(df[PVALUE], alpha, "holm")
+        df[HOLM] = holm_padj[1]
 
         return df
 
